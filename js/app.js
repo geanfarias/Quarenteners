@@ -8,9 +8,12 @@ const newOption = () => {
 };
 
 $(function () {
-    $("#name").keyup(function () {
+    $("#name").keyup(function (event) {
         if ($(this).val().length >= 3) {
-           return $("#Sortear").prop("disabled", false);
+            if (event.keyCode === 13) {
+                newOption();
+            }
+            return $("#Sortear").prop("disabled", false);
         }
         return $("#Sortear").prop("disabled", true);
     });
@@ -20,8 +23,29 @@ $(function () {
     });
 
     createCard = (response) => {
-        $("#WhatToDo").html($("#name").val() + ", " +response);
-        $(".box").fadeIn("fast");
-        $("#ttButton").prop("href", "https://twitter.com/intent/tweet?button_hashtag=Quarenteners&text=" + response + "%0A");
+        $("#WhatToDo").html($("#name").val() + ", " + response);
+        updateTweet(response);
+        // $("#ttButton").prop("href", "https://twitter.com/intent/tweet?button_hashtag=Quarenteners&text=" + response + "%0A#Quarenteners");
     };
+
+    //Twitter Button Update
+    function updateTweet(response) {
+        // Remove the iframe
+        $('.media-left iframe').remove();
+
+        // Generate new markup
+        $('<a>', {
+            class: 'twitter-share-button',
+            id: 'tweet_btn',
+            href: 'http://twitter.com/intent/tweet',
+            'data-text': response,
+            'data-hashtags': 'Quarenteners',
+            'data-url': ' ',
+            'data-size': 'large'
+        }).appendTo('.media-left');
+
+        // Reload the widget
+        twttr.widgets.load();
+        $(".box").fadeIn("fast");
+    }
 });
